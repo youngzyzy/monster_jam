@@ -1,3 +1,4 @@
+const ErrorResponse = require("../utils/errorResponse");
 const Academies = require("../models/academies");
 
 // @desc        Get all academies
@@ -13,10 +14,7 @@ exports.getAcademies = async (req, res, next) => {
       data: academies,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      success: false,
-    });
+    next(error);
   }
 };
 
@@ -27,13 +25,13 @@ exports.getAcademy = async (req, res, next) => {
   try {
     const academy = await Academies.findById(req.params.id);
     if (!academy) {
-      return res.status(400).json({
-        success: false,
-      });
+      return next(
+        new ErrorResponse(`Academy not found with ID of ${req.params.id}`, 404)
+      );
     }
     res.status(200).json({ success: true, data: academy });
   } catch (error) {
-    res.status(400).json({ success: false });
+    next(error);
   }
 };
 
@@ -48,10 +46,8 @@ exports.createAcademy = async (req, res, next) => {
       data: academy,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      success: false,
-    });
+    console.log("hitting create error");
+    next(error);
   }
 };
 
@@ -65,19 +61,16 @@ exports.updateAcademy = async (req, res, next) => {
       runValidators4: true,
     });
     if (!academy) {
-      return res.status(400).json({
-        success: false,
-      });
+      return next(
+        new ErrorResponse(`Academy not found with ID of ${req.params.id}`, 404)
+      );
     }
     res.status(200).json({
       success: true,
       data: academy,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      success: false,
-    });
+    next(error);
   }
 };
 
@@ -88,18 +81,15 @@ exports.deleteAcademy = async (req, res, next) => {
   try {
     const academy = await Academies.findByIdAndDelete(req.params.id);
     if (!academy) {
-      return res.status(400).json({
-        success: false,
-      });
+      return next(
+        new ErrorResponse(`Academy not found with ID of ${req.params.id}`, 404)
+      );
     }
     res.status(200).json({
       success: true,
       data: {},
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      success: false,
-    });
+    next(error);
   }
 };
