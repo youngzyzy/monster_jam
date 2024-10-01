@@ -9,13 +9,20 @@ dotenv.config({
 });
 
 const Academies = require("./models/academies");
+const Lessons = require("./models/lessons");
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI);
 
-// read josn files
+// read json files
 const academies = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/academies.json`),
+  "utf-8"
+);
+
+// read json files
+const lessons = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/lessons.json`),
   "utf-8"
 );
 
@@ -23,7 +30,7 @@ const academies = JSON.parse(
 const importData = async () => {
   try {
     await Academies.create(academies);
-
+    await Lessons.create(lessons);
     console.log("Data Imported...".green.inverse);
     process.exit();
   } catch (error) {
@@ -35,6 +42,7 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await Academies.deleteMany();
+    await Lessons.deleteMany();
     console.log("Data Destroyed...".red.inverse);
     process.exit();
   } catch (error) {

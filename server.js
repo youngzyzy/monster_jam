@@ -15,6 +15,8 @@ connectDB();
 
 //route files
 const academies = require("./routes/academies");
+const lessons = require("./routes/lessons");
+
 const app = express();
 
 // body parser
@@ -26,6 +28,7 @@ if (process.env.NODE_ENV === "development") {
 }
 // mount routers
 app.use("/api/v1/academies", academies);
+app.use("/api/v1/lessons", lessons);
 
 app.use(errorHandler);
 
