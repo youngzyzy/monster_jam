@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const geocoder = require("../utils/geocoder");
+const lessons = require("./lessons");
 
 const AcademiesSchema = new mongoose.Schema(
   {
@@ -102,6 +103,11 @@ const AcademiesSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -137,11 +143,15 @@ AcademiesSchema.pre("save", async function (next) {
 });
 
 // cascade delete courses when a bootcamp is deleted
-AcademiesSchema.pre("remove", async function (next) {
-  console.log(`Courses being removed from academy ${this._id}`);
-  await this.model("Course").deleteMany({ bootcamp: this._id });
-  next();
-});
+AcademiesSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    console.log(`Lessons being removed from academy ${this._id}`);
+    await this.model("Lessons").deleteMany({ academy: this._id });
+    next();
+  }
+);
 
 // reverse populate with virtuals
 AcademiesSchema.virtual("lessons", {

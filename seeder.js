@@ -10,6 +10,8 @@ dotenv.config({
 
 const Academies = require("./models/academies");
 const Lessons = require("./models/lessons");
+const User = require("./models/user");
+const Review = require("./models/review");
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI);
@@ -25,12 +27,22 @@ const lessons = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/lessons.json`),
   "utf-8"
 );
+const users = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/users.json`),
+  "utf-8"
+);
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/reviews.json`),
+  "utf-8"
+);
 
 // import into DB
 const importData = async () => {
   try {
     await Academies.create(academies);
     await Lessons.create(lessons);
+    await User.create(users);
+    await Review.create(reviews);
     console.log("Data Imported...".green.inverse);
     process.exit();
   } catch (error) {
@@ -43,6 +55,8 @@ const deleteData = async () => {
   try {
     await Academies.deleteMany();
     await Lessons.deleteMany();
+    await User.deleteMany();
+    await Review.deleteMany();
     console.log("Data Destroyed...".red.inverse);
     process.exit();
   } catch (error) {
